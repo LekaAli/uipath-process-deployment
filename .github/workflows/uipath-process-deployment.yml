@@ -10,7 +10,11 @@ on:
 
 permissions:
   contents: read
-
+env:
+  CLI_VERSION:      '1.202.0'
+  NODE_VERSION:     '22'
+  OUTPUT_DIR:       './dist'
+  
 jobs:
   package:
     # Use Windows for standard Windows-targeted UiPath projects.
@@ -20,10 +24,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Compute version
+        id: version
+        run: echo "version=1.2.0-ci.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+        
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: $NODE_VERSION
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
@@ -40,7 +48,7 @@ jobs:
           export PATH="$HOME/.npm-global/bin:$PATH"
 
           if ! command -v uip >/dev/null; then
-            npm install -g "@uipath/cli@1.202.0"
+            npm install -g "@uipath/cli@${CLI_VERSION}"
           fi
           uip --version
           
@@ -56,3 +64,18 @@ jobs:
             --client-id env.UIPATH_CLIENT_ID \
             --client-secret env.UIPATH_CLIENT_SECRET \
             --tenant "$UIPATH_TENANT"
+
+      - name: Pack Solution
+        id: pack
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$OUTPUT_DIR"
+          uip rpa pack . --auto-version false --version 1.0.0 --output-path $OUTPUT_DIR 
+          ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
+          echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: solution-zip
+          path: ${{ steps.pack.outputs.artifact }}
