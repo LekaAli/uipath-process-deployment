@@ -71,7 +71,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$OUTPUT_DIR"
-          uip rpa pack . --auto-version false --version 1.0.0 --output-path $OUTPUT_DIR 
+          uip rpa pack . --output-path $OUTPUT_DIR 
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
           echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
 
