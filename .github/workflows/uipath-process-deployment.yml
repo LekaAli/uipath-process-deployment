@@ -13,7 +13,7 @@ permissions:
 env:
   CLI_VERSION:      '1.202.0'
   NODE_VERSION:     '22'
-  OUTPUT_DIR:       '${RUNNER_TEMP}/uipath-packages'
+  OUTPUT_DIR:       '$RUNNER_TEMP/uipath-packages'
   
 jobs:
   package:
