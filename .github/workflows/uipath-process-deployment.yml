@@ -40,7 +40,7 @@ jobs:
           export PATH="$HOME/.npm-global/bin:$PATH"
 
           if ! command -v uip >/dev/null; then
-            npm install -g "@uipath/cli@1.0.0"
+            npm install -g "@uipath/cli@1.202.0"
           fi
           uip --version
           
