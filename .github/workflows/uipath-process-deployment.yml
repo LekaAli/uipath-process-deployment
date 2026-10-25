@@ -13,7 +13,7 @@ permissions:
 env:
   CLI_VERSION:      '1.202.0'
   NODE_VERSION:     '22'
-  OUTPUT_DIR:       './dist'
+  OUTPUT_DIR:       '${RUNNER_TEMP}/uipath-packages'
   
 jobs:
   package:
@@ -70,8 +70,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "$OUTPUT_DIR"
-          uip rpa pack . --output-path $OUTPUT_DIR 
+          mkdir -p $OUTPUT_DIR
+          uip rpa pack . --output-path $OUTPUT_DIR
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
           echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
 
