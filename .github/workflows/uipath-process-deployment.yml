@@ -65,15 +65,22 @@ jobs:
             --client-secret env.UIPATH_CLIENT_SECRET \
             --tenant "$UIPATH_TENANT"
 
-      - name: Pack Solution
+      - name: Create package output directory
         id: pack
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p $OUTPUT_DIR
+          echo "$OUTPUT_DIR"
+        
+      - name: Pack Package
+        id: rpa
+        shell: bash
+        run: |
+          set -euo pipefail
           uip rpa pack . --output-path $OUTPUT_DIR
-          ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
-          echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
+            ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
+            echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-artifact@v4
         with:
