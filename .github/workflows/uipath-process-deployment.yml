@@ -29,7 +29,21 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
+      
+      - name: Install UiPath CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.npm-global"
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.npm-global/bin:$PATH"
 
+          if ! command -v uip >/dev/null; then
+            npm install -g "@uipath/cli@1.0.0"
+          fi
+          uip --version
+          
       - name: Authenticate
         shell: bash
         env:
