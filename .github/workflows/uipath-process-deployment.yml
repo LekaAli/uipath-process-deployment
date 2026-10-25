@@ -84,5 +84,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: solution-zip
-          path: ${{ steps.pack.outputs.artifact }}
+          name: uipath-process-package
+          path: ${{ runner.temp }}/uipath-packages/*.nupkg
+          if-no-files-found: error
+          retention-days: 7
