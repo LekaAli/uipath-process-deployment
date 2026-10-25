@@ -51,7 +51,6 @@ jobs:
           UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
           UIPATH_TENANT:        ${{ vars.UIPATH_TENANT }}
         run: |
-          set -euo pipefail
           uip login \
             --client-id env.UIPATH_CLIENT_ID \
             --client-secret env.UIPATH_CLIENT_SECRET \
