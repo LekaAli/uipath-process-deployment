@@ -90,7 +90,7 @@ jobs:
           #  ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
           #  echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
 
-          uip solution init
+          uip solution init $SOLUTION_NAME
           
           uip solution pack . "$OUTPUT_DIR" \
             --name "$SOLUTION_NAME" \
