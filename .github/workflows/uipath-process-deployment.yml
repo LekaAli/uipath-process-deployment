@@ -70,6 +70,8 @@ jobs:
       - name: Create package output directory
         id: pack
         shell: bash
+        env:
+          OUTPUT_DIR: ${{ runner.temp }}/uipath-packages
         run: |
           set -euo pipefail
           mkdir -p "$OUTPUT_DIR"
@@ -78,6 +80,8 @@ jobs:
       - name: Pack Package
         id: rpa
         shell: bash
+        env:
+          OUTPUT_DIR: ${{ runner.temp }}/uipath-packages
         run: |
           set -euo pipefail
           echo "$PACKAGE_VERSION"
@@ -88,7 +92,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: uipath-process-package
-          path: ${{ env.OUTPUT_DIR }}/*.nupkg
+          path: ${{ runner.temp }}/uipath-packages/*.nupkg
           if-no-files-found: error
           retention-days: 7
   publish-deploy:
@@ -126,7 +130,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: uipath-process-package
-          path: ${{ env.OUTPUT_DIR }}
+          path: ${{ runner.temp }}/uipath-packages
           
       - name: Authenticate
         shell: bash
@@ -143,6 +147,8 @@ jobs:
 
       - name: Publish to tenant feed
         shell: bash
+        env:
+          OUTPUT_DIR: ${{ runner.temp }}/uipath-packages
         run: |
           set -euo pipefail
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
@@ -150,8 +156,10 @@ jobs:
 
       - name: Deploy Process
         shell: bash
+        env:
+          OUTPUT_DIR: ${{ runner.temp }}/uipath-packages
         run: |
           set -eou pipefail
           PACKAGE_NAME=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
-            DEPLOYMENT_NAME=$(echo "$PACKAGE_NAME" | awk -F'/' '{print $NF}' | awk -F '.' '{print $1}')
+          DEPLOYMENT_NAME=$(echo "$PACKAGE_NAME" | awk -F'/' '{print $NF}' | awk -F '.' '{print $1}')
           uip solution deploy run --name $DEPLOYMENT_NAME --package-name $PACKAGE_NAME --package-version $PACKAGE_VERSION --folder $ORCHESTRATOR_FOLDER
