@@ -79,7 +79,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          uip rpa-legacy pack . --output "$RUNNER_TEMP/uipath-packages" --version ${steps.version.outputs.version}
+          uip rpa-legacy pack . --output "$RUNNER_TEMP/uipath-packages" --version ${{ steps.version.outputs.version }}
             ARTIFACT=$(find "$RUNNER_TEMP/uipath-packages" -maxdepth 1 -name "*.nupkg" | head -1)
             echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
 
