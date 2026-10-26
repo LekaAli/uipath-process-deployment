@@ -73,13 +73,16 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/uipath-packages"
           echo "$RUNNER_TEMP/uipath-packages"
-        
+      
       - name: Pack Package
         id: rpa
         shell: bash
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
-          uip rpa pack . "$RUNNER_TEMP/uipath-packages" --package-version "${{ steps.version.outputs.version }}"
+          echo "$PACKAGE_VERSION"
+          uip rpa pack . "$RUNNER_TEMP/uipath-packages" --package-version $PACKAGE_VERSION
             ARTIFACT=$(find "$RUNNER_TEMP/uipath-packages" -maxdepth 1 -name "*.nupkg" | head -1)
             echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
 
