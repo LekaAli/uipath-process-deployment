@@ -82,17 +82,24 @@ jobs:
         shell: bash
         env:
           OUTPUT_DIR: ${{ runner.temp }}/uipath-packages
+          SOLUTION_NAME: uipath-process-solution
         run: |
           set -euo pipefail
           echo "$PACKAGE_VERSION"
-          uip rpa pack . "$OUTPUT_DIR" --package-version $PACKAGE_VERSION
-            ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
+          #uip rpa pack . "$OUTPUT_DIR" --package-version $PACKAGE_VERSION
+          #  ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
+          #  echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
+
+          uip solution pack . "$OUTPUT_DIR" \
+            --name "$SOLUTION_NAME" \
+            --version "${{ steps.version.outputs.version }}"
+          ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
             echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: uipath-process-package
-          path: ${{ runner.temp }}/uipath-packages/*.nupkg
+          name: solution-zip  # uipath-process-package
+          path: ${{ runner.temp }}/uipath-packages/*.zip
           if-no-files-found: error
           retention-days: 7
   publish-deploy:
@@ -152,7 +159,7 @@ jobs:
         run: |
           set -euo pipefail
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
-          uip rpa publish "$ARTIFACT"
+          uip solution publish "$ARTIFACT" --wait
 
       - name: Deploy Process
         shell: bash
@@ -162,4 +169,4 @@ jobs:
           set -eou pipefail
           PACKAGE_NAME=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
           DEPLOYMENT_NAME=$(echo "$PACKAGE_NAME" | awk -F'/' '{print $NF}' | awk -F '.' '{print $1}')
-          uip solution deploy run --name $DEPLOYMENT_NAME --package-name $PACKAGE_NAME --package-version $PACKAGE_VERSION --folder-name $ORCHESTRATOR_FOLDER
+          uip solution deploy run --name $DEPLOYMENT_NAME --package-name $PACKAGE_NAME --package-version $PACKAGE_VERSION --folder-name $ORCHESTRATOR_FOLDER --auto-activate
