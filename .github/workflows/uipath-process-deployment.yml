@@ -85,6 +85,7 @@ jobs:
           uip rpa pack . "$RUNNER_TEMP/uipath-packages" --package-version $PACKAGE_VERSION
             ARTIFACT=$(find "$RUNNER_TEMP/uipath-packages" -maxdepth 1 -name "*.nupkg" | head -1)
             echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
+            echo "$GITHUB_OUTPUT"
 
       - uses: actions/upload-artifact@v4
         with:
