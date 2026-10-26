@@ -90,7 +90,7 @@ jobs:
           #  ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
           #  echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
 
-          SOLUTION_PATH=$(uip solution init $SOLUTION_NAME --output-filter "Data.Path" --output json)
+          SOLUTION_PATH=$(uip solution init $SOLUTION_NAME --output json | jq -r '.Data.Path')
           
           uip solution pack . "$OUTPUT_DIR" \
             --name "$SOLUTION_PATH" \
