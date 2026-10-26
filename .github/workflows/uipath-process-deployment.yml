@@ -14,6 +14,7 @@ env:
   CLI_VERSION:      '1.202.0'
   NODE_VERSION:     '22'
   OUTPUT_DIR:       '$RUNNER_TEMP/uipath-packages'
+  OrchestratorFolder: 'Processes'
   
 jobs:
   build-package:
@@ -88,8 +89,8 @@ jobs:
           path: ${{ runner.temp }}/uipath-packages/*.nupkg
           if-no-files-found: error
           retention-days: 7
-  deploy:
-      name: Publish and deploy
+  publish-deploy:
+      name: Publish & Deploy
       needs: build-package
       runs-on: windows-latest
       environment: dev
@@ -145,4 +146,8 @@ jobs:
           ARTIFACT=$(find "$RUNNER_TEMP/uipath-packages" -maxdepth 1 -name "*.nupkg" | head -1)
           uip rpa publish "$ARTIFACT"
 
-      
+      - name: Deploy Process
+        shell: bash
+        run: |
+          set -eou pipefail
+          uip solution deploy run --folder ${OrchestratorFolder}
