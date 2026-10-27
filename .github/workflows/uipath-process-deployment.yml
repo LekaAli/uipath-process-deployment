@@ -92,7 +92,7 @@ jobs:
 
           SOLUTION_PATH=$(uip solution init $SOLUTION_NAME --output json | jq -r '.Data.Path')
 
-          uip solution projects add "${{ runner.workspace }}"
+          uip solution projects add "${{ runner.workspace }}/project.json"
 
           uip solution pack . "$OUTPUT_DIR" \
             --name "$SOLUTION_PATH" \
