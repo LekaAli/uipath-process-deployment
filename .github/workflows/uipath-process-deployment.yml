@@ -91,7 +91,7 @@ jobs:
           #  echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
 
           SOLUTION_PATH=$(uip solution init $SOLUTION_NAME --output json | jq -r '.Data.Path')
-
+          ls ${{ runner.workspace }}
           uip solution projects add "${{ runner.workspace }}" $SOLUTION_PATH
 
           uip solution pack . "$OUTPUT_DIR" \
