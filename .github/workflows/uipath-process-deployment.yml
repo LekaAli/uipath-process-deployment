@@ -83,6 +83,7 @@ jobs:
         env:
           OUTPUT_DIR: ${{ runner.temp }}/uipath-packages
           SOLUTION_NAME: uipath-process-solution
+          SOLUTION_PATH: ${SOLUTION_NAME}/${SOLUTION_NAME}.uipx
         run: |
           set -euo pipefail
           echo "$PACKAGE_VERSION"
@@ -90,9 +91,9 @@ jobs:
           #  ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
           #  echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
 
-          SOLUTION_PATH=$(uip solution init $SOLUTION_NAME --output json | jq -r '.Data.Path')
+          #SOLUTION_PATH=$(uip solution init $SOLUTION_NAME --output json | jq -r '.Data.Path')
           
-          uip solution projects add "${{ runner.workspace }}" '${SOLUTION_NAME}/${SOLUTION_NAME}.uipx'
+          uip solution projects add ${{ runner.workspace }} $SOLUTION_PATH
 
           uip solution pack . "$OUTPUT_DIR" \
             --name "$SOLUTION_PATH" \
