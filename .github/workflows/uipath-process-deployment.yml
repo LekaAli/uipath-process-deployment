@@ -93,7 +93,7 @@ jobs:
 
           SOLUTION_PATH_2=$(uip solution init $SOLUTION_NAME --output json | jq -r '.Data.Path')
           echo "$SOLUTION_PATH - $SOLUTION_PATH_2"
-          uip solution projects add . $SOLUTION_PATH_2
+          uip solution projects import . --solutionFile $SOLUTION_PATH_2
 
           uip solution pack . "$OUTPUT_DIR" \
             --name "$SOLUTION_PATH" \
