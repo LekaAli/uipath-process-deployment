@@ -83,6 +83,7 @@ jobs:
         env:
           SOLUTION_DIR_NAME: "${{ github.event.repository.name }}-solution"
           PROCESS_OUT_DIR_PATH: "${{ runner.temp }}/${{ github.event.repository.name }}-solution"
+          OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
         run: |
           set -euo pipefail
           uip solution init $PROCESS_OUT_DIR_PATH
@@ -100,7 +101,7 @@ jobs:
           
           cd "$PROCESS_OUT_DIR_PATH"
           
-          uip solution pack . "${{ runner.temp }}/uipath-process-solutions" \
+          uip solution pack . "$OUTPUT_DIR" \
             --name "${{ github.event.repository.name }}-solution" \
             --version "${{ steps.version.outputs.version }}"
 
