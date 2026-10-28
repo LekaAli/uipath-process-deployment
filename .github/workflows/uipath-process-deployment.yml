@@ -96,13 +96,20 @@ jobs:
           uip solution project add "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}" \
             "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}-solution.uipx"
 
+          mkdir -p $OUTPUT_DIR
+          
           cd "$PROCESS_OUT_DIR_PATH"
           
-          uip solution pack . "$OUTPUT_DIR" \
+          uip solution pack . "${{ runner.temp }}/uipath-process-solutions" \
             --name "${{ github.event.repository.name }}-solution" \
             --version "${{ steps.version.outputs.version }}"
 
-          mkdir -p $OUTPUT_DIR
-          
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
           echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
+      
+      - uses: actions/upload-artifact@v4
+        with:
+          name: solution-zip
+          path: ${{ runner.temp }}/uipath-process-solutions/*.zip
+          if-no-files-found: error
+          retention-days: 7
