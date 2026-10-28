@@ -110,6 +110,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: solution-zip
-          path: ${{ runner.temp }}/uipath-process-solutions/*.zip
-          if-no-files-found: error
+          path: "${{ steps.rpa.outputs.artifact }}"
+          if-no-files-found: warn
           retention-days: 7
