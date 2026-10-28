@@ -85,8 +85,7 @@ jobs:
           PROCESS_OUT_DIR_PATH: "${{ runner.temp }}/${{ github.event.repository.name }}-solution"
         run: |
           set -euo pipefail
-          echo "$PROCESS_OUT_DIR_PATH - $PROCESS_OUT_DIR_PATH"
-          uip solution init $SOLUTION_DIR_NAME
+          uip solution init $PROCESS_OUT_DIR_PATH
 
           cp -r "${{ runner.workspace }}" "$PROCESS_OUT_DIR_PATH"
 
