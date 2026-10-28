@@ -90,5 +90,5 @@ jobs:
 
           cp -r "${{ runner.workspace }}" "$PROCESS_OUT_DIR_PATH"
 
-          uip solution add "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}" "$PROCESS_OUT_DIR_PATH/$SOLUTION_DIR_NAME.uipx"
+          uip solution project add "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}" "$PROCESS_OUT_DIR_PATH/$SOLUTION_DIR_NAME.uipx"
         
