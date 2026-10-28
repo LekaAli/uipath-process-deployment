@@ -88,7 +88,7 @@ jobs:
           echo "$PROCESS_OUT_DIR_PATH - $PROCESS_OUT_DIR_PATH"
           uip solution init $SOLUTION_DIR_NAME
 
-          cp -r ${{ runner.workspace }} $PROCESS_OUT_DIR_PATH
+          cp -r "${{ runner.workspace }}" "$PROCESS_OUT_DIR_PATH"
 
-          uip solution add $PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }} "$PROCESS_OUT_DIR_PATH/$SOLUTION_DIR_NAME.uipx"
+          uip solution add "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}" "$PROCESS_OUT_DIR_PATH/$SOLUTION_DIR_NAME.uipx"
         
