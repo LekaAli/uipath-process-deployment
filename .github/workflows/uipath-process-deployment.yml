@@ -82,7 +82,7 @@ jobs:
         shell: bash
         env:
           SOLUTION_DIR_NAME: "${{ github.event.repository.name }}-solution"
-          PROCESS_OUT_DIR_PATH: ${{ runner.temp }}/$SOLUTION_DIR_NAME
+          PROCESS_OUT_DIR_PATH: "${{ runner.temp }}/${{ github.event.repository.name }}-solution"
         run: |
           set -euo pipefail
           echo "$PROCESS_OUT_DIR_PATH - $PROCESS_OUT_DIR_PATH"
@@ -90,5 +90,5 @@ jobs:
 
           cp -r "${{ runner.workspace }}" "$PROCESS_OUT_DIR_PATH"
 
-          uip solution project add "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}" "$PROCESS_OUT_DIR_PATH/$SOLUTION_DIR_NAME.uipx"
+          uip solution project add "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}" "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}-solution.uipx"
         
