@@ -35,11 +35,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: "node"
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
+          cache: "dotnet"
       
       - name: Install UiPath CLI
         shell: bash
@@ -127,6 +129,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: "node"
 
       - name: Cache npm global (@uipath/cli)
         uses: actions/cache@v4
@@ -173,6 +176,7 @@ jobs:
         run: |
           set -euo pipefail
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
+          echo "$ARTIFACT"
           uip solution publish "$ARTIFACT" --wait
 
       - name: Deploy Process
