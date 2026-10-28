@@ -12,7 +12,7 @@ permissions:
 env:
   CLI_VERSION:      '1.202.0'
   NODE_VERSION:     '22'
-  OUTPUT_DIR:       $RUNNER_TEMP/uipath-packages
+  OUTPUT_DIR:       '$RUNNER_TEMP/uipath-process-solutions'
   ORCHESTRATOR_FOLDER: 'Processes'
   SOLUTION_OUT_DIR: 'uipath-solution-folder'
   PACKAGE_VERSION: 1.0.0-ci.${{ github.run_number }}
@@ -93,5 +93,16 @@ jobs:
 
           ls -la "$PROCESS_OUT_DIR_PATH"
 
-          uip solution project add "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}" "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}-solution.uipx"
-        
+          uip solution project add "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}" \
+            "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}-solution.uipx"
+
+          cd "$PROCESS_OUT_DIR_PATH"
+          
+          uip solution pack . "$OUTPUT_DIR" \
+            --name "${{ github.event.repository.name }}-solution" \
+            --version "${{ steps.version.outputs.version }}"
+
+          mkdir -p $OUTPUT_DIR
+          
+          ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
+          echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
