@@ -87,7 +87,7 @@ jobs:
           set -euo pipefail
           uip solution init $PROCESS_OUT_DIR_PATH
 
-          cp -r "${{ runner.workspace }}" "$PROCESS_OUT_DIR_PATH"
+          cp -r . "$PROCESS_OUT_DIR_PATH"
 
           ls -la "$PROCESS_OUT_DIR_PATH"
 
