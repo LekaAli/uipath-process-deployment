@@ -21,7 +21,8 @@ jobs:
   build-package:
     # Use Windows for standard Windows-targeted UiPath projects.
     runs-on: windows-latest
-        
+    outputs:
+      output-artifact: ${{ steps.rpa.outputs.artifact }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -114,3 +115,73 @@ jobs:
           path: "${{ steps.rpa.outputs.artifact }}"
           if-no-files-found: warn
           retention-days: 7
+          
+  publish-deploy:
+      name: Publish & Deploy
+      needs: build-package
+      runs-on: windows-latest
+      environment: dev
+
+      steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Cache npm global (@uipath/cli)
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm-global/lib/node_modules
+          key:  uip-${{ env.CLI_VERSION }}-${{ runner.os }}
+      
+      - name: Install UiPath CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.npm-global"
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.npm-global/bin:$PATH"
+
+          if ! command -v uip >/dev/null; then
+            npm install -g "@uipath/cli@${CLI_VERSION}"
+          fi
+          uip --version
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: solution-zip
+          path: "${{ runner.temp }}/uipath-process-solutions"
+          
+      - name: Authenticate
+        shell: bash
+        env:
+          UIPATH_CLIENT_ID:     ${{ secrets.UIPATH_CLIENT_ID }}
+          UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
+          UIPATH_TENANT:        ${{ vars.UIPATH_TENANT }}
+        run: |
+          set -euo pipefail
+          uip login \
+            --client-id env.UIPATH_CLIENT_ID \
+            --client-secret env.UIPATH_CLIENT_SECRET \
+            --tenant "$UIPATH_TENANT"
+
+      - name: Publish to tenant feed
+        shell: bash
+        env:
+          OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
+        run: |
+          set -euo pipefail
+          ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
+          uip solution publish "$ARTIFACT" --wait
+
+      - name: Deploy Process
+        shell: bash
+        env:
+          OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
+          ORCHESTRATOR_FOLDER: "Processes"
+        run: |
+          set -eou pipefail
+          PACKAGE_NAME=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
+          DEPLOYMENT_NAME=$(echo "$PACKAGE_NAME" | awk -F'/' '{print $NF}' | awk -F '.' '{print $1}')
+          uip solution deploy run --name $DEPLOYMENT_NAME --package-name $PACKAGE_NAME --package-version $PACKAGE_VERSION --folder-name $ORCHESTRATOR_FOLDER --auto-activate
