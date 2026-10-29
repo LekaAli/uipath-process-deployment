@@ -159,12 +159,18 @@ jobs:
           UIPATH_CLIENT_ID:     ${{ secrets.UIPATH_CLIENT_ID }}
           UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
           UIPATH_TENANT:        ${{ vars.UIPATH_TENANT }}
+          UIPATH_ORGANIZATION:  ${{ vars.UIPATH_ORGANIZATION }}
         run: |
           set -euo pipefail
           uip login \
-            --client-id env.UIPATH_CLIENT_ID \
-            --client-secret env.UIPATH_CLIENT_SECRET \
-            --tenant "$UIPATH_TENANT"
+            --client-id $UIPATH_CLIENT_ID \
+            --client-secret $UIPATH_CLIENT_SECRET \
+            --account "$UIPATH_ORGANIZATION" \
+            --tenant "$UIPATH_TENANT" \
+            --scopes "OR.Assets OR.BackgroundTasks OR.Execution OR.Folders OR.Jobs OR.Machines OR.Monitoring OR.QueueProcessing OR.Queues OR.Robots OR.Settings OR.TestAutomation OR.Users OR.Webhooks"
+
+          # Verify the session is valid and active before moving forward
+          uip login status --detailed
 
       - name: Publish to tenant feed
         shell: bash
@@ -181,7 +187,6 @@ jobs:
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
           echo "$ARTIFACT"
           
-          uip login status
           uip solution publish "$ARTIFACT" --timeout 1800 --wait
 
       - name: Deploy Process
