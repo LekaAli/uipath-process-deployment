@@ -176,7 +176,9 @@ jobs:
           echo "$ARTIFACT"
           
           uip login status
-          uip solution publish "$ARTIFACT"
+          uip solution publish "$ARTIFACT" --login-validity 30 \
+            --timeout 1800 \
+            --wait
 
       - name: Deploy Process
         shell: bash
