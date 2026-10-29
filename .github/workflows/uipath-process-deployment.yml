@@ -166,8 +166,8 @@ jobs:
             --client-id $UIPATH_CLIENT_ID \
             --client-secret $UIPATH_CLIENT_SECRET \
             --organization "$UIPATH_ORGANIZATION" \
-            --tenant "$UIPATH_TENANT" \
-            --scope "OR.Assets OR.BackgroundTasks OR.Execution OR.Folders OR.Jobs OR.Machines OR.Monitoring OR.QueueProcessing OR.Queues OR.Robots OR.Settings OR.TestAutomation OR.Users OR.Webhooks"
+            --tenant "$UIPATH_TENANT"
+            #--scope "OR.Assets OR.BackgroundTasks OR.Execution OR.Folders OR.Jobs OR.Machines OR.Monitoring OR.QueueProcessing OR.Queues OR.Robots OR.Settings OR.TestAutomation OR.Users OR.Webhooks"
 
           # Verify the session is valid and active before moving forward
           uip login status --detailed
