@@ -176,7 +176,7 @@ jobs:
           echo "$ARTIFACT"
           
           uip login status
-          #uip solution publish "$ARTIFACT"
+          uip solution publish "$ARTIFACT"
 
       - name: Deploy Process
         shell: bash
