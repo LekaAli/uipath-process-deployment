@@ -153,23 +153,18 @@ jobs:
           name: solution-zip
           path: "${{ runner.temp }}/uipath-process-solutions"
           
-      - name: Authenticate & Publish RPA Solution
+      - name: Authenticate
         shell: bash
         env:
           UIPATH_CLIENT_ID:     ${{ secrets.UIPATH_CLIENT_ID }}
           UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
           UIPATH_TENANT:        ${{ vars.UIPATH_TENANT }}
-          OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
         run: |
           set -euo pipefail
           uip login \
             --client-id env.UIPATH_CLIENT_ID \
             --client-secret env.UIPATH_CLIENT_SECRET \
             --tenant "$UIPATH_TENANT"
-
-          ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
-          echo "$ARTIFACT"
-          uip solution publish "$ARTIFACT"
 
       - name: Publish to tenant feed
         shell: bash
@@ -179,6 +174,8 @@ jobs:
           set -euo pipefail
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
           echo "$ARTIFACT"
+          
+          uip login status
           #uip solution publish "$ARTIFACT"
 
       - name: Deploy Process
@@ -190,4 +187,4 @@ jobs:
           set -eou pipefail
           PACKAGE_NAME=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
           DEPLOYMENT_NAME=$(echo "$PACKAGE_NAME" | awk -F'/' '{print $NF}' | awk -F '.' '{print $1}')
-          uip solution deploy run --name $DEPLOYMENT_NAME --package-name $PACKAGE_NAME --package-version $PACKAGE_VERSION --folder-name $ORCHESTRATOR_FOLDER --auto-activate
+          #uip solution deploy run --name $DEPLOYMENT_NAME --package-name $PACKAGE_NAME --package-version $PACKAGE_VERSION --folder-name $ORCHESTRATOR_FOLDER --auto-activate
