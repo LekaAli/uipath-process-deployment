@@ -153,18 +153,23 @@ jobs:
           name: solution-zip
           path: "${{ runner.temp }}/uipath-process-solutions"
           
-      - name: Authenticate
+      - name: Authenticate & Publish RPA Solution
         shell: bash
         env:
           UIPATH_CLIENT_ID:     ${{ secrets.UIPATH_CLIENT_ID }}
           UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
           UIPATH_TENANT:        ${{ vars.UIPATH_TENANT }}
+          OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
         run: |
           set -euo pipefail
           uip login \
             --client-id env.UIPATH_CLIENT_ID \
             --client-secret env.UIPATH_CLIENT_SECRET \
             --tenant "$UIPATH_TENANT"
+
+          ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
+          echo "$ARTIFACT"
+          uip solution publish "$ARTIFACT"
 
       - name: Publish to tenant feed
         shell: bash
@@ -174,7 +179,7 @@ jobs:
           set -euo pipefail
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
           echo "$ARTIFACT"
-          uip solution publish "$ARTIFACT"
+          #uip solution publish "$ARTIFACT"
 
       - name: Deploy Process
         shell: bash
