@@ -165,7 +165,7 @@ jobs:
           uip login \
             --client-id $UIPATH_CLIENT_ID \
             --client-secret $UIPATH_CLIENT_SECRET \
-            --account "$UIPATH_ORGANIZATION" \
+            --organization "$UIPATH_ORGANIZATION" \
             --tenant "$UIPATH_TENANT" \
             --scopes "OR.Assets OR.BackgroundTasks OR.Execution OR.Folders OR.Jobs OR.Machines OR.Monitoring OR.QueueProcessing OR.Queues OR.Robots OR.Settings OR.TestAutomation OR.Users OR.Webhooks"
 
