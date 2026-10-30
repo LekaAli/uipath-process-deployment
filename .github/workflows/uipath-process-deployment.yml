@@ -164,6 +164,7 @@ jobs:
           UIPATH_CLIENT_ID: ${{ secrets.UIPATH_CLIENT_ID }}
           UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
           UIPATH_CLI_AUTH_TOKEN: ${{ secrets.UIPATH_PAT }}
+          UIPATH_CLI_ORGANIZATION_ID: ${{ secrets.UIPATH_ORGANIZATION_ID }}
         run: |
           set -euo pipefail
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
