@@ -68,6 +68,8 @@ jobs:
             --client-secret env.UIPATH_CLIENT_SECRET \
             --tenant "$UIPATH_TENANT"
 
+          uip solution feeds list
+          
       - name: Create package output directory
         id: pack
         shell: bash
@@ -170,7 +172,6 @@ jobs:
           set -euo pipefail
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
           echo "$ARTIFACT"
-          uip solution feeds list
           uip solution publish "$ARTIFACT" --feed $ORCHESTRATOR_FOLDER
 
       - name: Deploy Process
