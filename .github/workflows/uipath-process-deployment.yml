@@ -159,7 +159,7 @@ jobs:
           OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
           UIPATH_CLI_ENABLE_ENV_AUTH: true
           UIPATH_URL: ${{ vars.UIPATH_URL }}
-          UIPATH_ORGANIZATION: ${{ vars.UIPATH_ORGANIZATION }}
+          UIPATH_CLI_ORGANIZATION_NAME: ${{ vars.UIPATH_ORGANIZATION }}
           UIPATH_TENANT: ${{ vars.UIPATH_TENANT }}
           UIPATH_CLIENT_ID: ${{ secrets.UIPATH_CLIENT_ID }}
           UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
