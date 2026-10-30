@@ -152,31 +152,12 @@ jobs:
         with:
           name: solution-zip
           path: "${{ runner.temp }}/uipath-process-solutions"
-          
-      - name: Authenticate
-        shell: bash
-        env:
-          UIPATH_CLIENT_ID:     ${{ secrets.UIPATH_CLIENT_ID }}
-          UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
-          UIPATH_TENANT:        ${{ vars.UIPATH_TENANT }}
-          UIPATH_ORGANIZATION:  ${{ vars.UIPATH_ORGANIZATION }}
-        run: |
-          set -euo pipefail
-          uip login \
-            --client-id $UIPATH_CLIENT_ID \
-            --client-secret $UIPATH_CLIENT_SECRET \
-            --organization "$UIPATH_ORGANIZATION" \
-            --tenant "$UIPATH_TENANT"
-            #--scope "OR.Assets OR.BackgroundTasks OR.Execution OR.Folders OR.Jobs OR.Machines OR.Monitoring OR.QueueProcessing OR.Queues OR.Robots OR.Settings OR.TestAutomation OR.Users OR.Webhooks"
-
-          # Verify the session is valid and active before moving forward
-          uip login status
 
       - name: Publish to tenant feed
         shell: bash
         env:
           OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
-          IPATH_CLI_ENABLE_ENV_AUTH: true
+          UIPATH_CLI_ENABLE_ENV_AUTH: true
           UIPATH_URL: ${{ vars.UIPATH_URL }}
           UIPATH_ORGANIZATION: ${{ vars.UIPATH_ORGANIZATION }}
           UIPATH_TENANT: ${{ vars.UIPATH_TENANT }}
@@ -186,7 +167,7 @@ jobs:
           set -euo pipefail
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
           echo "$ARTIFACT"
-          
+          uip login status --detailed
           uip solution publish "$ARTIFACT" --timeout 3600 --wait --login-validity 10
 
       - name: Deploy Process
