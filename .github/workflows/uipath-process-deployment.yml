@@ -70,12 +70,21 @@ jobs:
           UIPATH_CLIENT_ID:     ${{ secrets.UIPATH_CLIENT_ID }}
           UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
           UIPATH_TENANT:        ${{ vars.UIPATH_TENANT }}
+          UIPATH_CLI_ENABLE_ENV_AUTH: true
+          UIPATH_URL: ${{ vars.UIPATH_URL }}
+          UIPATH_CLI_ORGANIZATION_NAME: ${{ vars.UIPATH_ORGANIZATION }}
+          UIPATH_CLI_TENANT_NAME: ${{ vars.UIPATH_TENANT }}
+          UIPATH_CLI_TENANT_ID: ${{ secrets.UIPATH_TENANT_ID }}
+          UIPATH_CLI_CLIENT_ID: ${{ secrets.UIPATH_CLIENT_ID }}
+          UIPATH_CLI_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
+          UIPATH_CLI_AUTH_TOKEN: ${{ secrets.UIPATH_PAT }}
+          UIPATH_CLI_ORGANIZATION_ID: ${{ secrets.UIPATH_ORGANIZATION_ID }}
         run: |
           set -euo pipefail
           uip login \
-            --client-id env.UIPATH_CLIENT_ID \
-            --client-secret env.UIPATH_CLIENT_SECRET \
-            --tenant "$UIPATH_TENANT"
+            --client-id "$UIPATH_CLI_TENANT_ID" \
+            --client-secret "$UIPATH_CLI_CLIENT_SECRET" \
+            --tenant "$UIPATH_CLI_TENANT_NAME"
           uip solution feeds list
           
       - name: Create package output directory
