@@ -16,7 +16,7 @@ env:
   ORCHESTRATOR_FOLDER: 'Processes'
   SOLUTION_OUT_DIR: 'uipath-solution-folder'
   PACKAGE_VERSION: 1.0.0-ci.${{ github.run_number }}
-  UIPATH_CLI_ENABLE_ENV_AUTH: true
+  UIPATH_CLI_ENABLE_ENV_AUTH: false
   UIPATH_URL: ${{ vars.UIPATH_URL }}
   UIPATH_CLI_ORGANIZATION_NAME: ${{ vars.UIPATH_ORGANIZATION }}
   UIPATH_CLI_TENANT_NAME: ${{ vars.UIPATH_TENANT }}
