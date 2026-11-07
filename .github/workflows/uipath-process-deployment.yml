@@ -58,15 +58,15 @@ jobs:
       - name: Authenticate
         shell: bash
         env:
-          UIPATH_CLI_TENANT_NAME: ${{ vars.UIPATH_TENANT }}
-          UIPATH_CLI_TENANT_ID: ${{ secrets.UIPATH_TENANT_ID }}
-          UIPATH_CLI_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
+          UIPATH_TENANT_NAME: ${{ vars.UIPATH_TENANT }}
+          UIPATH_TENANT_ID: ${{ secrets.UIPATH_TENANT_ID }}
+          UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
         run: |
           set -euo pipefail
           uip login \
-            --client-id "$UIPATH_CLI_TENANT_ID" \
-            --client-secret "$UIPATH_CLI_CLIENT_SECRET" \
-            --tenant "$UIPATH_CLI_TENANT_NAME"
+            --client-id "$UIPATH_TENANT_ID" \
+            --client-secret "$UIPATH_CLIENT_SECRET" \
+            --tenant "$UIPATH_TENANT_NAME"
           
       - name: Create package output directory
         id: pack
