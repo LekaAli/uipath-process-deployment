@@ -143,14 +143,14 @@ jobs:
         env:
           OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
           UIPATH_CLI_ENABLE_ENV_AUTH: true
-          UIPATH_URL: ${{ vars.UIPATH_URL }}
-          UIPATH_CLI_ORGANIZATION_NAME: ${{ vars.UIPATH_ORGANIZATION }}
-          UIPATH_CLI_TENANT_NAME: ${{ vars.UIPATH_TENANT }}
-          UIPATH_CLI_TENANT_ID: ${{ secrets.UIPATH_TENANT_ID }}
-          UIPATH_CLI_CLIENT_ID: ${{ secrets.UIPATH_CLIENT_ID }}
-          UIPATH_CLI_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
-          UIPATH_CLI_AUTH_TOKEN: ${{ secrets.UIPATH_CLI_AUTH_TOKEN }}
-          UIPATH_CLI_ORGANIZATION_ID: ${{ secrets.UIPATH_ORGANIZATION_ID }}
+          UIPATH_URL: "${{ vars.UIPATH_URL }}"
+          UIPATH_CLI_ORGANIZATION_NAME: "${{ vars.UIPATH_ORGANIZATION }}"
+          UIPATH_CLI_TENANT_NAME: "${{ vars.UIPATH_TENANT }}"
+          UIPATH_CLI_TENANT_ID: "${{ secrets.UIPATH_TENANT_ID }}"
+          UIPATH_CLI_CLIENT_ID: "${{ secrets.UIPATH_CLIENT_ID }}"
+          UIPATH_CLI_CLIENT_SECRET: "${{ secrets.UIPATH_CLIENT_SECRET }}"
+          UIPATH_CLI_AUTH_TOKEN: "${{ secrets.UIPATH_CLI_AUTH_TOKEN }}"
+          UIPATH_CLI_ORGANIZATION_ID: "${{ secrets.UIPATH_ORGANIZATION_ID }}"
         run: |
           set -euo pipefail
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
