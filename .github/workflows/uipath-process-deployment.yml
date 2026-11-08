@@ -88,20 +88,6 @@ jobs:
           OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
         run: |
           set -euo pipefail
-          # uip rpa init $PROCESS_OUT_DIR_PATH
-          
-          # pwd "${{ github.workspace }}"
-          
-          # cp -r "${{ github.workspace }}" "$PROCESS_OUT_DIR_PATH"
-
-          # ls -la "$PROCESS_OUT_DIR_PATH"
-
-          # uip solution project add "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}" \
-          #  "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}-solution.uipx"
-
-          # mkdir -p $OUTPUT_DIR
-          
-          # cd "$PROCESS_OUT_DIR_PATH"
           
           uip rpa pack "${{ github.workspace }}" "$OUTPUT_DIR"
 
@@ -115,69 +101,70 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
           
-  # publish-deploy:
-  #     name: Publish & Deploy
-  #     needs: build-package
-  #     runs-on: windows-latest
-  #     environment: dev
+  publish-deploy:
+      name: Publish & Deploy
+      needs: build-package
+      runs-on: windows-latest
+      environment: dev
 
-  #     steps:
-  #     - name: Set up Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: "22"
+      steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
 
-  #     - name: Cache npm global (@uipath/cli)
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ~/.npm-global/lib/node_modules
-  #         key:  uip-${{ env.CLI_VERSION }}-${{ runner.os }}
+      - name: Cache npm global (@uipath/cli)
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm-global/lib/node_modules
+          key:  uip-${{ env.CLI_VERSION }}-${{ runner.os }}
       
-  #     - name: Install UiPath CLI
-  #       shell: bash
-  #       run: |
-  #         set -euo pipefail
-  #         mkdir -p "$HOME/.npm-global"
-  #         npm config set prefix "$HOME/.npm-global"
-  #         echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
-  #         export PATH="$HOME/.npm-global/bin:$PATH"
+      - name: Install UiPath CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.npm-global"
+          npm config set prefix "$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.npm-global/bin:$PATH"
 
-  #         if ! command -v uip >/dev/null; then
-  #           npm install -g "@uipath/cli@${CLI_VERSION}"
-  #         fi
-  #         uip --version
+          if ! command -v uip >/dev/null; then
+            npm install -g "@uipath/cli@${CLI_VERSION}"
+          fi
+          uip --version
 
-  #     - uses: actions/download-artifact@v4
-  #       with:
-  #         name: solution-zip
-  #         path: "${{ runner.temp }}/uipath-process-solutions"
+      - uses: actions/download-artifact@v4
+        with:
+          name: pack-dot-nupkg
+          path: "${{ runner.temp }}/uipath-process-solutions"
 
-  #     - name: Publish to tenant feed
-  #       shell: bash
-  #       env:
-  #         OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
-  #         UIPATH_CLI_ENABLE_ENV_AUTH: true
-  #         UIPATH_URL: ${{ vars.UIPATH_URL }}
-  #         UIPATH_CLI_ORGANIZATION_NAME: ${{ vars.UIPATH_ORGANIZATION }}
-  #         UIPATH_CLI_TENANT_NAME: ${{ vars.UIPATH_TENANT }}
-  #         UIPATH_CLI_TENANT_ID: ${{ secrets.UIPATH_TENANT_ID }}
-  #         UIPATH_CLI_CLIENT_ID: ${{ secrets.UIPATH_CLIENT_ID }}
-  #         UIPATH_CLI_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
-  #         UIPATH_CLI_AUTH_TOKEN: ${{ secrets.UIPATH_PAT }}
-  #         UIPATH_CLI_ORGANIZATION_ID: ${{ secrets.UIPATH_ORGANIZATION_ID }}
-  #       run: |
-  #         set -euo pipefail
-  #         ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
-  #         echo "$ARTIFACT"
-  #         uip solution publish "$ARTIFACT" --feed $ORCHESTRATOR_FOLDER
+      - name: Publish to tenant feed
+        shell: bash
+        env:
+          OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
+          UIPATH_CLI_ENABLE_ENV_AUTH: true
+          UIPATH_URL: ${{ vars.UIPATH_URL }}
+          UIPATH_CLI_ORGANIZATION_NAME: ${{ vars.UIPATH_ORGANIZATION }}
+          UIPATH_CLI_TENANT_NAME: ${{ vars.UIPATH_TENANT }}
+          UIPATH_CLI_TENANT_ID: ${{ secrets.UIPATH_TENANT_ID }}
+          UIPATH_CLI_CLIENT_ID: ${{ secrets.UIPATH_CLIENT_ID }}
+          UIPATH_CLI_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
+          UIPATH_CLI_AUTH_TOKEN: ${{ secrets.UIPATH_PAT }}
+          UIPATH_CLI_ORGANIZATION_ID: ${{ secrets.UIPATH_ORGANIZATION_ID }}
+        run: |
+          set -euo pipefail
+          ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
+          echo "$ARTIFACT"
+          # uip solution publish "$ARTIFACT" --feed $ORCHESTRATOR_FOLDER
+          uip rpa publish "$ARTIFACT" --folder-path "Processes"
 
-  #     - name: Deploy Process
-  #       shell: bash
-  #       env:
-  #         OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
-  #         ORCHESTRATOR_FOLDER: "Processes"
-  #       run: |
-  #         set -eou pipefail
-  #         PACKAGE_NAME=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
-  #         DEPLOYMENT_NAME=$(echo "$PACKAGE_NAME" | awk -F'/' '{print $NF}' | awk -F '.' '{print $1}')
-  #         #uip solution deploy run --name $DEPLOYMENT_NAME --package-name $PACKAGE_NAME --package-version $PACKAGE_VERSION --folder-name $ORCHESTRATOR_FOLDER --auto-activate
+      # - name: Deploy Process
+      #   shell: bash
+      #   env:
+      #     OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
+      #     ORCHESTRATOR_FOLDER: "Processes"
+      #   run: |
+      #     set -eou pipefail
+      #     PACKAGE_NAME=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
+      #     DEPLOYMENT_NAME=$(echo "$PACKAGE_NAME" | awk -F'/' '{print $NF}' | awk -F '.' '{print $1}')
+      #     #uip solution deploy run --name $DEPLOYMENT_NAME --package-name $PACKAGE_NAME --package-version $PACKAGE_VERSION --folder-name $ORCHESTRATOR_FOLDER --auto-activate
