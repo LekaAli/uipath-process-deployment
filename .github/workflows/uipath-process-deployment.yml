@@ -63,56 +63,57 @@ jobs:
           UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
         run: |
           set -euo pipefail
+          echo "$UIPATH_TENANT_ID" - "$UIPATH_CLIENT_SECRET" "$UIPATH_TENANT_NAME"
           uip login \
             --client-id "$UIPATH_TENANT_ID" \
             --client-secret "$UIPATH_CLIENT_SECRET" \
             --tenant "$UIPATH_TENANT_NAME"
           
-      - name: Create package output directory
-        id: pack
-        shell: bash
-        env:
-          OUTPUT_DIR: ${{ runner.temp }}/uipath-packages
-        run: |
-          set -euo pipefail
-          mkdir -p "$OUTPUT_DIR"
-          echo "$OUTPUT_DIR"
+      # - name: Create package output directory
+      #   id: pack
+      #   shell: bash
+      #   env:
+      #     OUTPUT_DIR: ${{ runner.temp }}/uipath-packages
+      #   run: |
+      #     set -euo pipefail
+      #     mkdir -p "$OUTPUT_DIR"
+      #     echo "$OUTPUT_DIR"
       
-      - name: Pack Package
-        id: rpa
-        shell: bash
-        env:
-          SOLUTION_DIR_NAME: "${{ github.event.repository.name }}-solution"
-          PROCESS_OUT_DIR_PATH: "${{ runner.temp }}/${{ github.event.repository.name }}-solution"
-          OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
-        run: |
-          set -euo pipefail
-          #uip rpa init $PROCESS_OUT_DIR_PATH
+      # - name: Pack Package
+      #   id: rpa
+      #   shell: bash
+      #   env:
+      #     SOLUTION_DIR_NAME: "${{ github.event.repository.name }}-solution"
+      #     PROCESS_OUT_DIR_PATH: "${{ runner.temp }}/${{ github.event.repository.name }}-solution"
+      #     OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
+      #   run: |
+      #     set -euo pipefail
+      #     #uip rpa init $PROCESS_OUT_DIR_PATH
           
-          #pwd "${{ github.workspace }}"
+      #     #pwd "${{ github.workspace }}"
           
-          #cp -r "${{ github.workspace }}" "$PROCESS_OUT_DIR_PATH"
+      #     #cp -r "${{ github.workspace }}" "$PROCESS_OUT_DIR_PATH"
 
-          #ls -la "$PROCESS_OUT_DIR_PATH"
+      #     #ls -la "$PROCESS_OUT_DIR_PATH"
 
-          #uip solution project add "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}" \
-          #  "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}-solution.uipx"
+      #     #uip solution project add "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}" \
+      #     #  "$PROCESS_OUT_DIR_PATH/${{ github.event.repository.name }}-solution.uipx"
 
-          mkdir -p $OUTPUT_DIR
+      #     mkdir -p $OUTPUT_DIR
           
-          #cd "$PROCESS_OUT_DIR_PATH"
+      #     #cd "$PROCESS_OUT_DIR_PATH"
           
-          uip rpa pack "${{ github.workspace }}" "$OUTPUT_DIR"
+      #     uip rpa pack "${{ github.workspace }}" "$OUTPUT_DIR"
 
-          ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
-          echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
+      #     ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
+      #     echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
       
-      - uses: actions/upload-artifact@v4
-        with:
-          name: pack-dot-nupkg
-          path: "${{ steps.rpa.outputs.artifact }}"
-          if-no-files-found: warn
-          retention-days: 7
+      # - uses: actions/upload-artifact@v4
+      #   with:
+      #     name: pack-dot-nupkg
+      #     path: "${{ steps.rpa.outputs.artifact }}"
+      #     if-no-files-found: warn
+      #     retention-days: 7
           
   # publish-deploy:
   #     name: Publish & Deploy
