@@ -156,7 +156,7 @@ jobs:
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
           echo "$ARTIFACT"
           # uip solution publish "$ARTIFACT" --feed $ORCHESTRATOR_FOLDER
-          uip rpa publish "$ARTIFACT" --folder-path "Processes"
+          uip rpa publish "$ARTIFACT" #--folder-path "Processes"
 
       # - name: Deploy Process
       #   shell: bash
