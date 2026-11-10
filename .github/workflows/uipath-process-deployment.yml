@@ -90,7 +90,7 @@ jobs:
         run: |
           set -euo pipefail
           
-          uip rpa pack "${{ github.workspace }}" "$OUTPUT_DIR"
+          uip rpa pack "${{ github.workspace }}" "$OUTPUT_DIR" --package-version $PACKAGE_VERSION
 
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
           echo "artifact=$ARTIFACT" >> "$GITHUB_OUTPUT"
