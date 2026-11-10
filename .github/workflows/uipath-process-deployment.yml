@@ -1,6 +1,7 @@
 name: Package UiPath Process
 
 on:
+  create: 
   push:
     branches: [main]
   pull_request:
@@ -151,12 +152,13 @@ jobs:
           UIPATH_CLI_CLIENT_SECRET: "${{ secrets.UIPATH_CLIENT_SECRET }}"
           UIPATH_CLI_AUTH_TOKEN: "${{ secrets.UIPATH_CLI_AUTH_TOKEN }}"
           UIPATH_CLI_ORGANIZATION_ID: "${{ secrets.UIPATH_ORGANIZATION_ID }}"
+          UIPATH_CLI_FEED_ID: "${{ secrets.UIPATH_FEED_ID }}"
         run: |
           set -euo pipefail
           ARTIFACT=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.nupkg" | head -1)
           echo "$ARTIFACT"
           # uip solution publish "$ARTIFACT" --feed $ORCHESTRATOR_FOLDER
-          uip rpa publish "$ARTIFACT" #--folder-path "Processes"
+          uip rpa publish "$ARTIFACT" --feed-id "$UIPATH_CLI_FEED_ID"
 
       # - name: Deploy Process
       #   shell: bash
