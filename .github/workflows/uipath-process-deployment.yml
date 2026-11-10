@@ -54,21 +54,6 @@ jobs:
           if ! command -v uip >/dev/null; then
             npm install -g "@uipath/cli@${CLI_VERSION}"
           fi
-          uip --version
-          
-      - name: Authenticate
-        shell: bash
-        env:
-          UIPATH_TENANT_NAME: ${{ vars.UIPATH_TENANT }}
-          UIPATH_TENANT_ID: ${{ secrets.UIPATH_TENANT_ID }}
-          UIPATH_CLIENT_SECRET: ${{ secrets.UIPATH_CLIENT_SECRET }}
-        run: |
-          set -euo pipefail
-          echo "$UIPATH_TENANT_NAME"
-          # uip login \
-          #   --client-id "$UIPATH_TENANT_ID" \
-          #   --client-secret "$UIPATH_CLIENT_SECRET" \
-          #   --tenant "$UIPATH_TENANT_NAME"
           
       - name: Create package output directory
         id: pack
@@ -80,7 +65,7 @@ jobs:
           mkdir -p "$OUTPUT_DIR"
           echo "$OUTPUT_DIR"
       
-      - name: Pack Package
+      - name: Run - "uip rpa pack command"
         id: rpa
         shell: bash
         env:
@@ -139,7 +124,7 @@ jobs:
           name: pack-dot-nupkg
           path: "${{ runner.temp }}/uipath-process-solutions"
 
-      - name: Publish to tenant feed
+      - name: Publish to tenant feed - "uip rpa publish"
         shell: bash
         env:
           OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
@@ -160,13 +145,13 @@ jobs:
           # uip solution publish "$ARTIFACT" --feed $ORCHESTRATOR_FOLDER
           uip rpa publish "$ARTIFACT" --feed-id "$UIPATH_CLI_FEED_ID"
 
-      # - name: Deploy Process
-      #   shell: bash
-      #   env:
-      #     OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
-      #     ORCHESTRATOR_FOLDER: "Processes"
-      #   run: |
-      #     set -eou pipefail
-      #     PACKAGE_NAME=$(find "$OUTPUT_DIR" -maxdepth 1 -name "*.zip" | head -1)
-      #     DEPLOYMENT_NAME=$(echo "$PACKAGE_NAME" | awk -F'/' '{print $NF}' | awk -F '.' '{print $1}')
-      #     #uip solution deploy run --name $DEPLOYMENT_NAME --package-name $PACKAGE_NAME --package-version $PACKAGE_VERSION --folder-name $ORCHESTRATOR_FOLDER --auto-activate
+      - name: Deploy Process
+        shell: bash
+        env:
+          OUTPUT_DIR: "${{ runner.temp }}/uipath-process-solutions"
+          ORCHESTRATOR_FOLDER: "Processes"
+          PROCESS_NAME: ${{ github.event.repository.name }}
+          PACKAGE_NAME: "uipath-automation"
+        run: |
+          set -eou pipefail
+          uip or processes create --name $PROCESS_NAME --folder-path "$ORCHESTRATOR_FOLDER" --package-key $PACKAGE_NAME --package-version $PACKAGE_VERSION
